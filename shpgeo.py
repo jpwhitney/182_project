@@ -125,11 +125,13 @@ def addfieldpercent(filePath, fieldName1, newFieldName, driverName = 'ESRI Shape
 
     # Loop through layer to calculate difference between fields {FID:newFieldValue}
     newFieldValues = {}
-    ALLArea = -1
+    ALLArea = -1.0
+    ALLFid = -1.0
     for feature in layer:
     	fid = feature.GetFID()
     	if feature.GetField('SPECIES') == 'ALL':
     		ALLArea = feature.GetField(fieldName1)
+    		ALLFid = fid
     		break
 
     for feature in layer:
@@ -142,11 +144,13 @@ def addfieldpercent(filePath, fieldName1, newFieldName, driverName = 'ESRI Shape
             continue
         newFieldValue = fieldValue1/ALLArea
         newFieldValues[fid] = newFieldValue
+    newFieldValues[ALLFid] = 1.0
     print newFieldValues
 
     # Feed that new dictionary into addNewFieldToSpatialFile
     addNewFieldToSpatialFile(filePath, driverName, newFieldName, 'Float', newFieldValues)
     return
+
 def getLayer(filePath, driverName, mode=0, osmLayer=None):
     """
     This function reads in an existing spatial file and returns its layer and data source (to keep it in scope)
