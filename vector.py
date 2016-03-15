@@ -1,3 +1,5 @@
+###Redistributed with permission from https://github.com/brmagnuson/GISUtilities (3/2016)###
+
 import sys
 import ogr
 import os

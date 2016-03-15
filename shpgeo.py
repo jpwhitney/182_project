@@ -55,15 +55,7 @@ def addfields(shapefilename, fieldNames):
 
 
 def addfeaturearea(filePath, newFieldName, driverName = 'ESRI Shapefile'):
-	"""
-	Finds the difference between two fields and adds that to the spatial file
-	:param filePath: String. Path to existing spatial file
-	:param driverName: String. Type of spatial file (eg, 'ESRI Shapefile', 'OSM', 'GeoJSON', 'KML', 'SQLite')
-	:param fieldName1: String. Name of first field
-	:param fieldName2: String. Name of second field
-	:param newFieldName: String. Name of newly generated field
-	:return:
-	"""
+
 	# Open spatial file
 	layer, dataSource = getLayer(filePath, driverName)
 
@@ -94,6 +86,8 @@ def addfieldpercent(filePath, fieldName1, newFieldName, driverName = 'ESRI Shape
 			allArea = feature.GetField(fieldName1)
 			allFid = fid
 			break
+
+	#reset the feature iteration
 	layer.ResetReading()
 
 	for feature in layer:
@@ -101,7 +95,6 @@ def addfieldpercent(filePath, fieldName1, newFieldName, driverName = 'ESRI Shape
 		fieldValue1 = feature.GetField(fieldName1)
 		newFieldValue = fieldValue1/allArea
 		newFieldValues[fid] = newFieldValue
-	#newFieldValues[ALLFid] = 1.0
 
 
 	# Feed that new dictionary into addNewFieldToSpatialFile
