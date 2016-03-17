@@ -1,7 +1,9 @@
 import os
 import ogr
 from vector import *
+
 def getshp(path):
+	#returns list of shapefile names in path
 	shapeList = []
 	for file in os.listdir(path):
 		if file.endswith(".shp"):
@@ -9,6 +11,8 @@ def getshp(path):
 	return shapeList
 
 def openlist(shapelist):
+	#opens layers which could allow passing layers as ogr layer objects
+	#not used in this version but possibly useful
 	driver = ogr.GetDriverByName('ESRI Shapefile')
 	layerlist = []
 	for shapefile in shapelist:
@@ -19,6 +23,10 @@ def openlist(shapelist):
 
 
 def splitname(filename, fieldnames):
+	#returns dict of fieldnames and fieldvalues
+	#fieldnames are passed in
+	#fieldvalues are parsed from filename
+
 	st = filename
 	st = st[:-4]
 	begin = st[:-1]
@@ -32,20 +40,24 @@ def splitname(filename, fieldnames):
 
 
 def addfields(shapefilename, fieldNames):
+	#adds fields and values to shapefile
+	#this method was written using input from http://gis.stackexchange.com/
+	#and https://pcjericks.github.io/py-gdalogr-cookbook/
 
+	#filehandling to open layer
 	shape = shapefilename
 	driver = ogr.GetDriverByName('ESRI Shapefile')
 	dataSource = driver.Open(shape, 1) #1 is read/write
 	layer = dataSource.GetLayer()
 
-	#define  fields
+	#add fieldnames using ogr
 	for field in fieldNames:
 		fldDef1 = ogr.FieldDefn(field, ogr.OFTString)
 		fldDef1.SetWidth(16) #16 char string width
 		layer.CreateField(fldDef1)
 
 
-	# add values
+	#iterate through features using fid and add values with ogr
 	for fieldName in fieldNames:
 		for fid in range(layer.GetFeatureCount()):
 			feature = layer.GetFeature(fid)
@@ -55,6 +67,7 @@ def addfields(shapefilename, fieldNames):
 
 
 def addfeaturearea(filePath, newFieldName, driverName = 'ESRI Shapefile'):
+	#written by modifying methods found in vector.py
 
 	# Open spatial file
 	layer, dataSource = getLayer(filePath, driverName)
@@ -67,12 +80,14 @@ def addfeaturearea(filePath, newFieldName, driverName = 'ESRI Shapefile'):
 		newFieldValue = geom.GetArea()
 		newFieldValues[fid] = newFieldValue
 
-	# Feed that new dictionary into addNewFieldToSpatialFile
+	# Feed that new dictionary into addNewFieldToSpatialFile a vector.py method
 	addNewFieldToSpatialFile(filePath, driverName, newFieldName, 'Float', newFieldValues)
 	return
 
 
 def addfieldpercent(filePath, fieldName1, newFieldName, driverName = 'ESRI Shapefile'):
+	# written by modifying methods found in vector.py
+
 	# Open spatial file
 	layer, dataSource = getLayer(filePath, driverName)
 
@@ -97,7 +112,8 @@ def addfieldpercent(filePath, fieldName1, newFieldName, driverName = 'ESRI Shape
 		newFieldValues[fid] = newFieldValue
 
 
-	# Feed that new dictionary into addNewFieldToSpatialFile
+	# Feed that new dictionary into addNewFieldToSpatialFile a vector.py method
+
 	addNewFieldToSpatialFile(filePath, driverName, newFieldName, 'Float', newFieldValues)
 	return
 
